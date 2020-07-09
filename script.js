@@ -35,7 +35,7 @@ function activButton() {
                 item.removeEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
             });
             allElements.forEach( item => {                              //назначаем всем элементам страницы прослушивание события
-            item.addEventListener('mousemove', getColor)});           //вызфваем функцию при клике на любой элемент 
+            item.addEventListener('click', getColor)});           //вызфваем функцию при клике на любой элемент 
             getColor();
         }
     }
@@ -43,23 +43,8 @@ function activButton() {
 
 }
 
-
-// function getColor(event) { //функция получения цвета
-// }
-// chrome.runtime.sendMessage({greeting: "ok"},         //отправить сообщение {greeting: "hello"} и функцию
-// function (response) {               //в функцию отправляем ответ
-//     if (!response.info) {            //если нет ответа
-//         return;
-//     }
-//     if (response.info) {                //ответ
-//         allElements.forEach( item => {                              //назначаем всем элементам страницы прослушивание события
-//             item.addEventListener('click', getCollCode);           //вызфваем функцию при клике на любой элемент 
-//         });
-//     }
-// });
-
 function getColor (event) {
-        event.preventDefault();  //отключаем возможность перехода на другие страницы
+        event.preventDefault(); //отключаем возможность перехода на другие страницы
         pipette.innerHTML = ''; //очищаем пипетку
         let pageColors = []; //пустой массив в котором будут хранится полученые цвета
         let chekType = 0;
@@ -137,9 +122,3 @@ function palletColor(event) {
         });
     }
 }
-
-
-
-
-
-//кидаем в попап
