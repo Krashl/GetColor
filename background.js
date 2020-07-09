@@ -1,37 +1,31 @@
 let che = false;
+let colorPallet;
 chrome.runtime.onMessage.addListener(
   function(request, sender, response) {
     switch (request.test) {
       case 'START':
-        alert('Выбирите любой элемент на странице, после нажатия ОК');
+        alert('Нажмите ОК и кликайте по элементам для выбора цвета');
         response({otvet: true});
         che = true;                     //разрешаем скрипту
         break;
-      case 'STOP':
-        alert('Пипетку выключили');
-        response({otvet: false});
+      case 'GDE':
+        // alert('Пипетку выключили');
+        if(colorPallet) {
+          response({pallet: colorPallet});
+        }
         break;
       case 'NAJALImmm':
         // alert('Скрипт спрашивает разрешение');
         response({otvet: che});
         che = false; 
         break;
+      default:
+
+        break;
+    }
+    if (request.pallet) {
+      colorPallet = request.pallet;
+      // alert(request.pallet);
     }
   }
 );
-
-
-// let flag = false;
-
-// chrome.runtime.onMessage.addListener(       //создаем слушалку
-// function(request, sender, response) {       //в него функцию(запрос, отправитель, ответ)
-//   if (request.greeting == "hello"){     //если запрос.приветсвие "hello"
-//     // flag = true;                        //задаём переменной истину
-//     response({info: true});             //отправлем сообщение "ok"
-//   } else {                                //иначе
-//     response({info: false});             //отправлем сообщение Ложь
-//     // flag = false;                       //отправлем сообщение Переменную в обратное состояние
-//   }
-//   // response({info: true});               //ответ истина
-//   // alert(request.greeting);
-// });

@@ -16,9 +16,12 @@ pipette.style.cssText = `
     background: rgb(255, 255, 255);
     border: 2px solid rgb(200, 200, 200);
     border-radius: 8px;
-    z-index: 10000;
+    z-index: 100000;
     position: absolute;
 `;                                                          //задаём стиль пипетке
+
+const colorPallet = [];                                 //массив с глобальной палитрой цветов
+
 
 allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
     item.addEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
@@ -29,7 +32,7 @@ function activButton() {
     chrome.runtime.sendMessage({test: 'NAJALImmm'},
     
     function(response) {
-        console.log(response.otvet);
+        // console.log(response.otvet);
         if (response.otvet) {
             allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
                 item.removeEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
@@ -55,7 +58,7 @@ function getColor (event) {
                 if (event.target.nodeName == item.toUpperCase()) {
                     if (!(styleElement.color == 'rgba(0, 0, 0, 0)')) {
                         pageColors[pageColors.length] = styleElement.color;
-                        console.log(styleElement.color);
+                        // console.log(styleElement.color);
                     }
                     chekType++; //изменяем проверку, чтобы не пойти в следующий массив
                     break;
@@ -65,15 +68,15 @@ function getColor (event) {
         if (chekType == 0) {
             if (!(styleElement.background.slice(0, styleElement.background.indexOf(')') + 1) == 'rgba(0, 0, 0, 0)')) {
                 pageColors[pageColors.length] = styleElement.background.slice(0, styleElement.background.indexOf(')') + 1);
-                console.log(styleElement.background.slice(0, styleElement.background.indexOf(')') + 1));
+                // console.log(styleElement.background.slice(0, styleElement.background.indexOf(')') + 1));
             }
             if (!(styleElement.backgroundColor == 'rgba(0, 0, 0, 0)' || styleElement.backgroundColor == pageColors[pageColors.length - 1] + '')) {
                 pageColors[pageColors.length] = styleElement.backgroundColor;
-                console.log(styleElement.backgroundColor);
+                // console.log(styleElement.backgroundColor);
             }
             if (!(styleElement.color == 'rgba(0, 0, 0, 0)')) {
                 pageColors[pageColors.length] = styleElement.color;
-                console.log(styleElement.color);
+                // console.log(styleElement.color);
             }
         }
 
@@ -98,7 +101,7 @@ function getColor (event) {
             colorDiv.addEventListener('click', palletColor); //добавляем прослушивание
         });
 
-        console.log(event);
+        // console.log(event);
 
         document.body.append(pipette); //Добавляем пипетку на страницу
         event.stopPropagation(); //запрещаем всплытие событий
@@ -106,13 +109,58 @@ function getColor (event) {
 }
 
 function palletColor(event) {
+    let seleColor = event.target.style.backgroundColor;
+    let ectVpalitre = false;
+    let paltNaOtprav = [];
+    ////////////////////////передаём в палитру
+    if (colorPallet.length < 8) {
+        for(let item of colorPallet) {
+            if(item == seleColor) {
+                ectVpalitre = true;
+                break;
+            }
+        }
+        if (!ectVpalitre) {
+            colorPallet[colorPallet.length] = seleColor;
+            console.log(colorPallet);
+
+
+            for(let i = 0; i < 8; i++){
+                if (!colorPallet[i]) {
+                    paltNaOtprav[i] = 'rgb(255, 255, 255)';        //цвет по умолчанию
+                } else {
+                    paltNaOtprav[i] = colorPallet[i];
+                } 
+            }
+            chrome.runtime.sendMessage({pallet: paltNaOtprav}, () => {});
+
+        }
+    }
+    /////////////////////////////////
+
+    chrome.runtime.sendMessage({test: 'NAJALImmm'},
+    
+    function(response) {
+        // console.log(response.otvet);
+        if (response.otvet) {
+            allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
+                item.removeEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
+            });
+            allElements.forEach( item => {                              //назначаем всем элементам страницы прослушивание события
+            item.addEventListener('click', getColor)});           //вызфваем функцию при клике на любой элемент 
+            getColor();
+        }
+    }
+    );
+
+    /////////////////////////
     allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
         item.removeEventListener('click', getColor);           //вызфваем функцию при клике на любой элемент 
     });
     allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
         item.addEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
     });
-    if (prompt('', event.target.style.backgroundColor)){
+    if (prompt('скопируйте код цвета', seleColor)){
         function funk (callback) {pipette.remove();}
         funk(function() {
             allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события

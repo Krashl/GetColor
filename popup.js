@@ -30,5 +30,47 @@ function runPipet(event) {
       }
   }
   );
-
 }
+
+setInterval(chekPallet, 1000);
+
+function chekPallet() {
+  chrome.runtime.sendMessage({test: 'GDE'}, 
+  function(response) {
+      if(response.pallet) {
+        // console.log(response.pallet);
+        rebildDiv(response.pallet);
+      }
+  }
+  );
+}
+
+function rebildDiv(mas){
+  pall.innerHTML = "";
+  mas.forEach((item, i) => {
+    pall.innerHTML += `<div class="divi" style="width: 29px; height: 29px; margin-top: 3px; border-radius:7px; background-color:${item}; border-radius:10px; border: 2px solid rgb(200, 200, 200);"></div>`;
+    // document.querySelectorAll('.divi')[i].addEventListener('click', palletColor); //добавляем прослушивание
+    if (document.querySelectorAll('.divi').length == 8) addLis();
+  });
+}
+
+function addLis() {
+  // console.log('asdas');
+  document.querySelectorAll('.divi').forEach(item => {
+    item.addEventListener('mouseover', activElement);
+    item.addEventListener('mouseout', passElement);
+    item.addEventListener('click', palletColor);
+  });
+}
+
+function palletColor(event) {
+  prompt('Copy color', event.target.style.backgroundColor);
+}
+
+// console.log(mas);
+// pall.innerHTML += `<div style="width: 29px; height: 29px; margin-top: 3px; border-radius:7px;  border-radius:10px; border: 2px solid rgb(200, 200, 200);"></div>`;
+// pall.querySelectorAll('*')[i].addEventListener('click', palletColor); //добавляем прослушивание
+// pall.querySelectorAll('*')[i]('mouseover', activElement);
+// pall.querySelectorAll('*')[i]('mouseout', passElement);
+
+
