@@ -22,14 +22,23 @@ function passElement(event) {
 let response = 123;
 
 function runPipet(event) {
-  alert('qw');
-  chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-    if (!response) {
-      console.log(chrome.runtime.lastError);
-      return;
-    }
-    if (response.info == 'ok') {
-      alert(response.info);
-    }
-  });
+
+  chrome.runtime.sendMessage({test: 'START'}, 
+  function(response) {
+      if(response.otvet) {
+        // alert('Knopka Started');
+      }
+  }
+  );
+
 }
+
+  // chrome.runtime.sendMessage({greeting: "hello"}, function(response) {    //отправить сообщение {greeting: "hello"} и функцию
+  //   if (!response) {        //если нет ответа
+  //     // alert(chrome.runtime.lastError);    //если нет ответа вывести ошибку
+  //     return;                           //звкончить функцию
+  //   }
+  //   if (response.info == 'ok') {        //если нет ответа вывести ошибку    
+  //     // alert(response.info);             //вывести ответ ответ info
+  //   }
+  // });
