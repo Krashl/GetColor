@@ -1,5 +1,7 @@
 "use strict";
 
+const delay = 100;
+
 const allElements = document.querySelectorAll('*');     //выбрали все элеменеты на странице
 
 const textTags = ['a', 'abbr', 'address', 'area', 'article', 
@@ -22,10 +24,37 @@ pipette.style.cssText = `
 
 const colorPallet = [];                                 //массив с глобальной палитрой цветов
 
+let deep = 0;
+const maxDeep = 2;
 
-allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
-    item.addEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
+allElements.forEach( item => {              
+    item.addEventListener('keypress', someFunc);      
 });
+
+function someFunc(event) {
+    if (event.key == 'q') {
+        allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
+            item.removeEventListener('mousemove', getColor);           //вызфваем функцию при клике на любой элемент 
+            item.removeEventListener('click', nePerehodi);
+            item.removeEventListener('click', nextMove);
+            pipette.remove();
+        });
+    }
+}                                                       //выключение по нажатию q
+
+// allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
+//     item.addEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
+// });
+try {
+    opros();
+} catch (err) {
+    opros();
+}
+
+
+function opros() {
+    setInterval(activButton, delay);
+}
 
 function activButton() {
 
@@ -38,13 +67,36 @@ function activButton() {
                 item.removeEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
             });
             allElements.forEach( item => {                              //назначаем всем элементам страницы прослушивание события
-            item.addEventListener('click', getColor)});           //вызфваем функцию при клике на любой элемент 
-            getColor();
+            item.addEventListener('mousemove', getColor);           //вызфваем функцию при клике на любой элемент 
+            item.addEventListener('click', nePerehodi);
+            });           //вызфваем функцию при клике на любой элемент 
+            // getColor();
         }
     }
     );
 
 }
+
+function nextMove(event) {
+    event.preventDefault(); //отключаем возможность перехода на другие страницы
+    allElements.forEach( item => {
+        item.addEventListener('mousemove', getColor);
+        item.addEventListener('click', nePerehodi);
+        item.removeEventListener('click', nextMove);
+    });
+    event.stopPropagation(); //запрещаем всплытие событий
+}
+
+function nePerehodi(event) {
+    event.preventDefault(); //отключаем возможность перехода на другие страницы
+    allElements.forEach( item => {
+        item.removeEventListener('mousemove', getColor);
+        item.removeEventListener('click', nePerehodi);
+        item.addEventListener('click', nextMove);
+    });
+    event.stopPropagation(); //запрещаем всплытие событий
+}
+
 
 function getColor (event) {
         event.preventDefault(); //отключаем возможность перехода на другие страницы
@@ -79,7 +131,7 @@ function getColor (event) {
                 // console.log(styleElement.color);
             }
         }
-
+        
         pipette.style.cssText += `                             
         top: ${event.pageY}px;
         left: ${event.pageX}px;
@@ -104,69 +156,56 @@ function getColor (event) {
         // console.log(event);
 
         document.body.append(pipette); //Добавляем пипетку на страницу
-        event.stopPropagation(); //запрещаем всплытие событий
 
+        event.stopPropagation(); //запрещаем всплытие событий
 }
 
 function palletColor(event) {
     let seleColor = event.target.style.backgroundColor;
     let ectVpalitre = false;
     let paltNaOtprav = [];
+
+    allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
+        item.removeEventListener('mousemove', getColor);           //вызфваем функцию при клике на любой элемент 
+        item.removeEventListener('click', nePerehodi);
+        item.removeEventListener('click', nextMove);
+    });
+
     ////////////////////////передаём в палитру
-    if (colorPallet.length < 8) {
-        for(let item of colorPallet) {
-            if(item == seleColor) {
-                ectVpalitre = true;
-                break;
-            }
-        }
-        if (!ectVpalitre) {
-            colorPallet[colorPallet.length] = seleColor;
-            console.log(colorPallet);
 
-
-            for(let i = 0; i < 8; i++){
-                if (!colorPallet[i]) {
-                    paltNaOtprav[i] = 'rgb(255, 255, 255)';        //цвет по умолчанию
-                } else {
-                    paltNaOtprav[i] = colorPallet[i];
-                } 
-            }
-            chrome.runtime.sendMessage({pallet: paltNaOtprav}, () => {});
-
-        }
-    }
-    /////////////////////////////////
-
-    chrome.runtime.sendMessage({test: 'NAJALImmm'},
-    
-    function(response) {
-        // console.log(response.otvet);
-        if (response.otvet) {
-            allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
-                item.removeEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
-            });
-            allElements.forEach( item => {                              //назначаем всем элементам страницы прослушивание события
-            item.addEventListener('click', getColor)});           //вызфваем функцию при клике на любой элемент 
-            getColor();
-        }
-    }
-    );
-
-    /////////////////////////
-    allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
-        item.removeEventListener('click', getColor);           //вызфваем функцию при клике на любой элемент 
-    });
-    allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
-        item.addEventListener('click', activButton);           //вызфваем функцию при клике на любой элемент 
-    });
     if (prompt('скопируйте код цвета', seleColor)){
-        function funk (callback) {pipette.remove();}
-        funk(function() {
-            allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
-                item.addEventListener('click', getColor);           //вызфваем функцию при клике на любой элемент 
-            });  
-            
+        
+        if (colorPallet.length < 8) {
+            for(let item of colorPallet) {
+                if(item == seleColor) {
+                    ectVpalitre = true;
+                    break;
+                }
+            }
+            if (!ectVpalitre) {
+                colorPallet[colorPallet.length] = seleColor;
+                console.log(colorPallet);
+    
+    
+                for(let i = 0; i < 8; i++){
+                    if (!colorPallet[i]) {
+                        paltNaOtprav[i] = 'rgb(255, 255, 255)';        //цвет по умолчанию
+                    } else {
+                        paltNaOtprav[i] = colorPallet[i];
+                    } 
+                }
+                chrome.runtime.sendMessage({pallet: paltNaOtprav}, () => {});
+    
+            }
+        }
+
+        pipette.remove();
+
+    } else {
+        allElements.forEach( item => {                          //назначаем всем элементам страницы прослушивание события
+            item.addEventListener('mousemove', getColor);           //вызфваем функцию при клике на любой элемент 
+            item.addEventListener('click', nePerehodi);
+            item.addEventListener('click', nextMove);
         });
     }
 }

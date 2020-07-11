@@ -1,5 +1,7 @@
 'use strict';
 
+const delay = 100;
+
 function test () {
   console.log(window.storage.globalVar);
 }

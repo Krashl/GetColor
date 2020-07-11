@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(
   function(request, sender, response) {
     switch (request.test) {
       case 'START':
-        alert('Нажмите ОК и кликайте по элементам для выбора цвета');
+        // alert('Нажмите ОК и кликайте по элементам для выбора цвета');
         response({otvet: true});
         che = true;                     //разрешаем скрипту
         break;
