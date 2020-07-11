@@ -1,5 +1,9 @@
 let che = false;
-let colorPallet;
+let colorPallet = [];
+for (let i = 0; i < 8; i++) {
+  colorPallet[i] = 'rgb(255, 255, 255)';
+}
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, response) {
     switch (request.test) {

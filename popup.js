@@ -25,19 +25,19 @@ function runPipet(event) {
 
   chrome.runtime.sendMessage({test: 'START'}, 
   function(response) {
-      if(response.otvet) {
+      if(response.otvet != undefined) {
         // alert('Knopka Started');
       }
   }
   );
 }
 
-setInterval(chekPallet, 1000);
+setInterval(chekPallet, 200);
 
 function chekPallet() {
   chrome.runtime.sendMessage({test: 'GDE'}, 
   function(response) {
-      if(response.pallet) {
+      if(response.pallet != undefined) {
         // console.log(response.pallet);
         rebildDiv(response.pallet);
       }
